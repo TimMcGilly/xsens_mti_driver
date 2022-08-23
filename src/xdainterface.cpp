@@ -49,6 +49,7 @@
 #include "messagepublishers/temperaturepublisher.h"
 #include "messagepublishers/timereferencepublisher.h"
 #include "messagepublishers/transformpublisher.h"
+#include "messagepublishers/triggerpublisher.h"
 #include "messagepublishers/twistpublisher.h"
 #include "messagepublishers/velocityincrementpublisher.h"
 #include "messagepublishers/positionllapublisher.h"
@@ -144,9 +145,17 @@ void XdaInterface::registerPublishers(ros::NodeHandle &node)
 	{
 		registerCallback(new TransformPublisher(node));
 	}
+	if (ros::param::get("~pub_trigger", should_publish) && should_publish)
+	{
+		registerCallback(new TriggerPublisher(node));
+	}
 	if (ros::param::get("~pub_positionLLA", should_publish) && should_publish)
 	{
 		registerCallback(new PositionLLAPublisher(node));
+	}
+	if (ros::param::get("~pub_velocity", should_publish) && should_publish)
+	{
+		registerCallback(new VelocityPublisher(node));
 	}
 	if (ros::param::get("~pub_velocity", should_publish) && should_publish)
 	{
