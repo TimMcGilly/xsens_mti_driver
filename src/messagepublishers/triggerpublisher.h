@@ -49,12 +49,40 @@ struct TriggerPublisher : public PacketCallback
 
     void operator()(const XsDataPacket &packet, ros::Time timestamp)
     {
+        // if (packet.triggerIndication(XDI_TriggerIn2).m_line != 0){
+        //     std::cout << packet.triggerIndication(XDI_TriggerIn2).m_line << std::endl;
+        // }
+        
+        // if (packet.status() & 0x200000){
+        //     const uint32_t SAMPLE_TIME_FINE_HZ = 10000UL;
+        //     const uint32_t ONE_GHZ = 1000000000UL;
+        //     uint32_t sec, nsec, t_fine;
+        //     sensor_msgs::TimeReference msg;
 
-        if (packet.containsTriggerIndication(XDI_TriggerIn1))
+        //     t_fine = packet.sampleTimeFine();
+        //     sec = t_fine / SAMPLE_TIME_FINE_HZ;
+        //     nsec = (t_fine % SAMPLE_TIME_FINE_HZ) * (ONE_GHZ / SAMPLE_TIME_FINE_HZ);
+
+        //     if (packet.containsSampleTimeCoarse())
+        //     {
+        //         sec = packet.sampleTimeCoarse();
+        //     }
+
+        //     ros::Time sample_time(sec, nsec);
+
+        //     msg.header.stamp = timestamp;
+        //     // msg.header.frame_id = unused
+        //     msg.time_ref = sample_time;
+        //     // msg.source = optional
+
+        //     pub.publish(msg);
+        // }
+
+        if (packet.containsTriggerIndication(XDI_TriggerIn2))
         {
-            XsTriggerIndicationData trigger = packet.triggerIndication(XDI_TriggerIn1);
+            XsTriggerIndicationData trigger = packet.triggerIndication(XDI_TriggerIn2);
             
-            const uint32_t SAMPLE_TIME_FINE_HZ = 10000UL;
+            const uint32_t SAMPLE_TIME_FINE_HZ = 1000000UL;
             const uint32_t ONE_GHZ = 1000000000UL;
             uint32_t sec, nsec, t_fine;
             sensor_msgs::TimeReference msg;
@@ -62,11 +90,6 @@ struct TriggerPublisher : public PacketCallback
             t_fine = trigger.m_timestamp;
             sec = t_fine / SAMPLE_TIME_FINE_HZ;
             nsec = (t_fine % SAMPLE_TIME_FINE_HZ) * (ONE_GHZ / SAMPLE_TIME_FINE_HZ);
-
-            if (packet.containsSampleTimeCoarse())
-            {
-                sec = packet.sampleTimeCoarse();
-            }
 
             ros::Time sample_time(sec, nsec);
 
